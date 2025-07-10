@@ -19,14 +19,14 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 30 ,unique = true, nullable = false)
+    @Column(length = 30, unique = true, nullable = false)
     private String actNo;
 
     @ManyToOne
     @JoinColumn(name = "actType_id")
     private AccountType actType;
 
-    @Column(length = 30 ,nullable = false)
+    @Column(length = 30, nullable = false)
     private String actCurrency;
 
     @Column(nullable = false)
@@ -39,12 +39,9 @@ public class Account {
     @JoinColumn(name = "cust_id")
     private Customer customer;
 
-    @OneToMany
-    @JoinColumn(name = "sender")
+    @OneToMany(mappedBy = "sender")
     private List<Transaction> senderTransactions;
 
-    @OneToMany
-    @JoinColumn(name = "receiver")
+    @OneToMany(mappedBy = "receiver")
     private List<Transaction> receiverTransactions;
-
 }

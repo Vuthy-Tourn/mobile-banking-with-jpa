@@ -3,6 +3,7 @@ package com.vuthy.mobilebankingapi.service.Impl;
 import com.vuthy.mobilebankingapi.domain.Customer;
 import com.vuthy.mobilebankingapi.dto.CreateCustomerRequest;
 import com.vuthy.mobilebankingapi.dto.CustomerResponse;
+import com.vuthy.mobilebankingapi.mapper.CustomerMapper;
 import com.vuthy.mobilebankingapi.repository.CustomerRepository;
 import com.vuthy.mobilebankingapi.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,14 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
+
+    @Override
+    public CustomerResponse findCustomerByPhoneNumber(String phoneNumber) {
+        return customerRepository.findByPhoneNumber(phoneNumber)
+                .map(customerMapper::fromCustomer)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer phone number is not found"));
+    }
 
     @Override
     public CustomerResponse createCustomer(CreateCustomerRequest createCustomerRequest) {
@@ -34,13 +43,8 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
 
-        Customer customer = new Customer();
-        customer.setFullName(createCustomerRequest.fullName());
-        customer.setGender(createCustomerRequest.gender());
+        Customer customer = customerMapper.toCustomer(createCustomerRequest);
         customer.setIsDeleted(false);
-        customer.setEmail(createCustomerRequest.email());
-        customer.setRemark(createCustomerRequest.remark());
-        customer.setPhoneNumber(createCustomerRequest.phoneNumber());
         customer.setAccounts(new ArrayList<>());
 
         log.info("Creating Customer getID before save: " + customer.getId());
@@ -49,22 +53,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         log.info("Created Customer getID after save : {}", customer.getId());
 
-        return CustomerResponse.builder()
-                .fullName(customer.getFullName())
-                .gender(customer.getGender())
-                .email(customer.getEmail())
-                .build();
+        return customerMapper.fromCustomer(customer);
     }
 
     @Override
     public List<CustomerResponse> findAllCustomers() {
         List<CustomerResponse> customers = customerRepository.findAll()
                 .stream()
-                .map(c-> CustomerResponse.builder()
-                        .fullName(c.getFullName())
-                        .gender(c.getGender())
-                        .email(c.getEmail())
-                        .build())
+                .map(customerMapper::fromCustomer)
                 .toList();
 
         return customers;

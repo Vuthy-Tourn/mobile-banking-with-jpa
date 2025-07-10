@@ -21,6 +21,6 @@ public class TransactionType {
     @Column(length = 30,unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "tranType")
+    @OneToMany(mappedBy = "transactionType")
     private List<Transaction> transactions;
 }

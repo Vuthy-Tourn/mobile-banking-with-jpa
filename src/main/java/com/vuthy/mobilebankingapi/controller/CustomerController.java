@@ -19,6 +19,11 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
 
+    @GetMapping("/{phoneNumber}")
+    public CustomerResponse getCustomerByPhoneNumber(@PathVariable String phoneNumber) {
+        return customerService.findCustomerByPhoneNumber(phoneNumber);
+    }
+
     @GetMapping
     public List<CustomerResponse> getAllCustomers() {
         return customerService.findAllCustomers();
