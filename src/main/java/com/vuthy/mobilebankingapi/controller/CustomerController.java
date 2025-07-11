@@ -1,8 +1,8 @@
 package com.vuthy.mobilebankingapi.controller;
 
-
 import com.vuthy.mobilebankingapi.dto.CreateCustomerRequest;
 import com.vuthy.mobilebankingapi.dto.CustomerResponse;
+import com.vuthy.mobilebankingapi.dto.UpdateCustomerRequest;
 import com.vuthy.mobilebankingapi.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +35,17 @@ public class CustomerController {
         return customerService.createCustomer(createCustomerRequest);
 
     }
+
+    @PatchMapping("/{phoneNumber}")
+    public CustomerResponse updateCustomer(@PathVariable String phoneNumber, @RequestBody UpdateCustomerRequest updateCustomerRequest) {
+        return customerService.updateCustomerByPhoneNumber(phoneNumber, updateCustomerRequest);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{phoneNumber}")
+    public void deleteCustomer(@PathVariable String phoneNumber) {
+        customerService.deleteCustomerByPhoneNumber(phoneNumber);
+    }
+
 
 }
