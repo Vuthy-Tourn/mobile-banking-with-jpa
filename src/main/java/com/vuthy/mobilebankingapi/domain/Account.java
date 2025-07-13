@@ -22,7 +22,7 @@ public class Account {
     @Column(length = 30, unique = true, nullable = false)
     private String actNo;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "actType_id")
     private AccountType actType;
 
