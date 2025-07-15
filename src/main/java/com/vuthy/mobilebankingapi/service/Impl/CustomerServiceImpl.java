@@ -128,9 +128,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void verifyKYCByNationalCardId(String nationalCardId) {
-//       if(!customerRepository.existsByPhoneNumber(phoneNumber)){
-//           throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number does not exist");
-//       }
+        if(!kycRepository.existsByNationalCardId(nationalCardId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "National card does not exist");
+        }
         KYC kyc = kycRepository.findByNationalCardId(nationalCardId)
                 .orElseThrow(() -> new RuntimeException("KYC not found"));
         kyc.setIsVerified(true);
