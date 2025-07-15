@@ -12,6 +12,5 @@ public record CreateAccountRequest(
 
         @NotNull(message = "Customer Phone Number is required")
         String phoneNumber
-
 ) {
 }

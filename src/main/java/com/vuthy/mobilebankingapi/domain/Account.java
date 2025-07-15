@@ -35,6 +35,9 @@ public class Account {
     @Column(nullable = false)
     private Boolean isDeleted;
 
+    @Column(nullable = false)
+    private BigDecimal overLimit;
+
     @ManyToOne
     @JoinColumn(name = "cust_id")
     private Customer customer;

@@ -46,7 +46,11 @@ public class Customer {
 //    @JoinColumn(unique = true)
 //    private KYC kyc;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private KYC kyc;
+
+    @ManyToOne
+    @JoinColumn(name = "segment_id")
+    private Segment segment;
 }

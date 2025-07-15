@@ -10,6 +10,7 @@ import com.vuthy.mobilebankingapi.mapper.AccountMapper;
 import com.vuthy.mobilebankingapi.repository.AccountRepository;
 import com.vuthy.mobilebankingapi.repository.AccountTypeRepository;
 import com.vuthy.mobilebankingapi.repository.CustomerRepository;
+import com.vuthy.mobilebankingapi.repository.SegmentRepository;
 import com.vuthy.mobilebankingapi.service.AccountService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountMapper accountMapper;
     private final CustomerRepository customerRepository;
     private final AccountTypeRepository accountTypeRepository;
+    private final SegmentRepository segmentRepository;
 
     @Override
     public AccountResponse createAccount(CreateAccountRequest createAccountRequest) {
@@ -48,6 +50,7 @@ public class AccountServiceImpl implements AccountService {
                     return accountTypeRepository.save(newType);
                 });
 
+
         Account account = accountMapper.toAccount(createAccountRequest);
         account.setActType(savingsType);
         account.setIsDeleted(false);
@@ -55,6 +58,17 @@ public class AccountServiceImpl implements AccountService {
         account.setReceiverTransactions(new ArrayList<>());
         account.setSenderTransactions(new ArrayList<>());
         account.setCustomer(customer);
+
+
+        String segment = customer.getSegment().getName();
+
+        if (segment.equalsIgnoreCase("Gold")) {
+            account.setOverLimit(BigDecimal.valueOf(50000));
+        } else if (segment.equalsIgnoreCase("Silver")) {
+            account.setOverLimit(BigDecimal.valueOf(10000));
+        } else if (segment.equalsIgnoreCase("Regular")) {
+            account.setOverLimit(BigDecimal.valueOf(5000));
+        }
 
         accountRepository.save(account);
 

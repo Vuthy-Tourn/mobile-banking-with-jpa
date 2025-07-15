@@ -13,4 +13,6 @@ public interface CustomerService {
     CustomerResponse findCustomerByPhoneNumber(String phoneNumber);
     CustomerResponse updateCustomerByPhoneNumber(String phoneNumber, UpdateCustomerRequest updateCustomerRequest);
     void deleteCustomerByPhoneNumber(String phoneNumber);
+    void disableCustomerByPhoneNumber(String phoneNumber);
+    void verifyKYCByNationalCardId(String nationalCardId);
 }

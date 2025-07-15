@@ -11,6 +11,7 @@ public record AccountResponse(
         String actType,
         String actCurrency,
         BigDecimal balance,
-        Boolean isDeleted
+        Boolean isDeleted,
+        Double overLimit
 ) {
 }

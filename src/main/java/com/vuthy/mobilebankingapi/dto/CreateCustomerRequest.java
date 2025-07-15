@@ -1,5 +1,6 @@
 package com.vuthy.mobilebankingapi.dto;
 
+import com.vuthy.mobilebankingapi.domain.Segment;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -15,6 +16,12 @@ public record CreateCustomerRequest(
         @Email
         String email,
         String phoneNumber,
-        String remark
+        String remark,
+
+        @NotBlank(message = "National Card ID is required")
+        String nationalCardId,
+
+        @NotBlank(message = "Segment is required")
+        String segmentName
 ) {
 }

@@ -4,6 +4,7 @@ import com.vuthy.mobilebankingapi.dto.CreateCustomerRequest;
 import com.vuthy.mobilebankingapi.dto.CustomerResponse;
 import com.vuthy.mobilebankingapi.dto.UpdateCustomerRequest;
 import com.vuthy.mobilebankingapi.service.CustomerService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,5 +48,16 @@ public class CustomerController {
         customerService.deleteCustomerByPhoneNumber(phoneNumber);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{phoneNumber}")
+    public void disableCustomerByPhoneNumber(@PathVariable String phoneNumber) {
+        customerService.disableCustomerByPhoneNumber(phoneNumber);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/verify/{nationalCardId}")
+    public void verifyKYCByNationalCardId(@PathVariable String nationalCardId) {
+        customerService.verifyKYCByNationalCardId(nationalCardId);
+    }
 
 }

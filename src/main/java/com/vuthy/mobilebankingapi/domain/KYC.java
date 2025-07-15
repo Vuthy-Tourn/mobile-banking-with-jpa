@@ -12,23 +12,23 @@ import lombok.Setter;
 @Entity
 public class KYC {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nationalCardId;
 
     @Column(nullable = false)
-    private Boolean isVerified;
+    private Boolean isVerified= false;
 
     @Column(nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     // associate with foreign key
 //    @OneToOne(mappedBy = "kyc")
 //    private Customer customer;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "cust_id")
+    @JoinColumn(name = "customer_id")  // Changed from @MapsId
     private Customer customer;
 }
