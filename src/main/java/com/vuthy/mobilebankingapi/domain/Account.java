@@ -22,6 +22,9 @@ public class Account {
     @Column(length = 30, unique = true, nullable = false)
     private String actNo;
 
+    @Column(nullable = false, length = 50)
+    private String actName;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "actType_id")
     private AccountType actType;
@@ -34,6 +37,9 @@ public class Account {
 
     @Column(nullable = false)
     private Boolean isDeleted;
+
+    @Column(nullable = false)
+    private Boolean isHide;
 
     @Column(nullable = false)
     private BigDecimal overLimit;

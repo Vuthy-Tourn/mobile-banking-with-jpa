@@ -19,10 +19,10 @@ public class KYC {
     private String nationalCardId;
 
     @Column(nullable = false)
-    private Boolean isVerified= false;
+    private Boolean isVerified;
 
     @Column(nullable = false)
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 
     // associate with foreign key
 //    @OneToOne(mappedBy = "kyc")

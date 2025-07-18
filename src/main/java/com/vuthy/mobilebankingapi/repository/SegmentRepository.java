@@ -1,12 +1,10 @@
 package com.vuthy.mobilebankingapi.repository;
 
-import com.vuthy.mobilebankingapi.domain.Segment;
+import com.vuthy.mobilebankingapi.domain.CustomerSegment;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface SegmentRepository extends JpaRepository<Segment, Integer> {
-    Optional<Segment> getSegmentByName(String name);
+public interface SegmentRepository extends JpaRepository<CustomerSegment, Integer> {
+    Optional<CustomerSegment> getSegmentByName(String name);
 }

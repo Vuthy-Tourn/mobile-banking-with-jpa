@@ -2,7 +2,7 @@ package com.vuthy.mobilebankingapi.service.Impl;
 
 import com.vuthy.mobilebankingapi.domain.Customer;
 import com.vuthy.mobilebankingapi.domain.KYC;
-import com.vuthy.mobilebankingapi.domain.Segment;
+import com.vuthy.mobilebankingapi.domain.CustomerSegment;
 import com.vuthy.mobilebankingapi.dto.CreateCustomerRequest;
 import com.vuthy.mobilebankingapi.dto.CustomerResponse;
 import com.vuthy.mobilebankingapi.dto.UpdateCustomerRequest;
@@ -66,20 +66,20 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         // Find segment
-        Segment segment = segmentRepository.getSegmentByName(createCustomerRequest.segmentName())
+        CustomerSegment customerSegment = segmentRepository.getSegmentByName(createCustomerRequest.customerSegment())
                 .orElseThrow(() -> new RuntimeException("Segment not found"));
 
         Customer customer = customerMapper.toCustomer(createCustomerRequest);
         customer.setIsDeleted(false);
         customer.setAccounts(new ArrayList<>());
-        customer.setSegment(segment);
+        customer.setCustomerSegment(customerSegment);
 
         Customer savedCustomer = customerRepository.save(customer);
 
         KYC kyc = new KYC();
         kyc.setNationalCardId(createCustomerRequest.nationalCardId());
-//        kyc.setIsVerified(false);
-//        kyc.setIsDeleted(false);
+        kyc.setIsVerified(false);
+        kyc.setIsDeleted(false);
         kyc.setCustomer(savedCustomer);
         kycRepository.save(kyc);
 
@@ -96,12 +96,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerResponse> findAllCustomers() {
-        List<CustomerResponse> customers = customerRepository.findAllByIsDeletedFalse()
+        return customerRepository.findAllByIsDeletedFalse()
                 .stream()
                 .map(customerMapper::fromCustomer)
                 .toList();
-
-        return customers;
     }
 
     @Override

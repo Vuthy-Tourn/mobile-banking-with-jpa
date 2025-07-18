@@ -1,12 +1,8 @@
 package com.vuthy.mobilebankingapi.service;
 
-import com.vuthy.mobilebankingapi.domain.Customer;
 import com.vuthy.mobilebankingapi.dto.AccountResponse;
 import com.vuthy.mobilebankingapi.dto.CreateAccountRequest;
 import com.vuthy.mobilebankingapi.dto.UpdateAccountRequest;
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

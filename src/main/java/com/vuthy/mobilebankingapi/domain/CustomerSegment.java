@@ -2,7 +2,6 @@ package com.vuthy.mobilebankingapi.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -12,8 +11,8 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 @Entity
-@Table(name = "segments")
-public class Segment {
+@Table(name = "customer_segments")
+public class CustomerSegment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class Segment {
     @Column(nullable = false)
     private Integer overLimit;
 
-    @OneToMany(mappedBy = "segment")
+    @OneToMany(mappedBy = "customerSegment")
     private List<Customer> customers;
 
 }

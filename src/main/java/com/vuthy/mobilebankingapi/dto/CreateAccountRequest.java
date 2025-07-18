@@ -1,16 +1,25 @@
 package com.vuthy.mobilebankingapi.dto;
 
+import com.vuthy.mobilebankingapi.util.CurrencyUtil;
+import jakarta.validation.constraints.NegativeOrZero;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
+
 public record CreateAccountRequest(
-        @NotBlank(message = "Account number is required")
         String actNo,
 
-        @NotBlank(message = "Currency is required")
-        String actCurrency,
+        @NotBlank(message = "Account name is required")
+        String actName,
+
+        CurrencyUtil actCurrency,
+
+        BigDecimal balance,
 
         @NotNull(message = "Customer Phone Number is required")
-        String phoneNumber
+        String phoneNumber,
+
+        String actType
 ) {
 }

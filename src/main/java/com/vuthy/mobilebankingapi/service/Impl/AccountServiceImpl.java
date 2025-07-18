@@ -12,6 +12,8 @@ import com.vuthy.mobilebankingapi.repository.AccountTypeRepository;
 import com.vuthy.mobilebankingapi.repository.CustomerRepository;
 import com.vuthy.mobilebankingapi.repository.SegmentRepository;
 import com.vuthy.mobilebankingapi.service.AccountService;
+import com.vuthy.mobilebankingapi.util.CurrencyUtil;
+import com.vuthy.mobilebankingapi.util.CustomerSegmentUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -35,39 +36,66 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponse createAccount(CreateAccountRequest createAccountRequest) {
+        Account account = accountMapper.toAccount(createAccountRequest);
+
+        Customer customer = customerRepository.findByPhoneNumber(createAccountRequest.phoneNumber())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer phone number is not found"));
+
+        String segment = customer.getCustomerSegment().getName();
+
+        switch (createAccountRequest.actCurrency()){
+            case CurrencyUtil.DOLLAR -> {
+                if (createAccountRequest.balance().compareTo(BigDecimal.TEN) < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Balance must be greater than ten dollars");
+                }
+
+                // segment with dollar
+                if (segment.equalsIgnoreCase(CustomerSegmentUtil.GOLD.toString())) {
+                    account.setOverLimit(BigDecimal.valueOf(50000));
+                } else if (segment.equalsIgnoreCase(CustomerSegmentUtil.SILVER.toString())) {
+                    account.setOverLimit(BigDecimal.valueOf(10000));
+                } else if (segment.equalsIgnoreCase(CustomerSegmentUtil.REGULAR.toString())) {
+                    account.setOverLimit(BigDecimal.valueOf(5000));
+                }
+            }
+            case CurrencyUtil.RIEL -> {
+                if (createAccountRequest.balance().compareTo(BigDecimal.valueOf(40000)) < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Balance must be greater than 40000 riel");
+                }
+
+                // segment with riel
+                if (segment.equalsIgnoreCase(CustomerSegmentUtil.GOLD.toString())) {
+                    account.setOverLimit(BigDecimal.valueOf(50000L * 4000));
+                } else if (segment.equalsIgnoreCase(CustomerSegmentUtil.SILVER.toString())) {
+                    account.setOverLimit(BigDecimal.valueOf(10000 * 4000));
+                } else if (segment.equalsIgnoreCase(CustomerSegmentUtil.REGULAR.toString())) {
+                    account.setOverLimit(BigDecimal.valueOf(5000 * 4000));
+                }
+            }
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Currency is not available");
+        }
 
         if(accountRepository.existsByActNo(createAccountRequest.actNo())){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Account Number is already exists");
         }
 
-        Customer customer = customerRepository.findByPhoneNumber(createAccountRequest.phoneNumber())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+        AccountType actType = accountTypeRepository.findByName(createAccountRequest.actType())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Account Type is not found"));
 
-        AccountType savingsType = accountTypeRepository.findByName("Savings")
-                .orElseGet(() -> {
-                    AccountType newType = new AccountType();
-                    newType.setName("Savings");
-                    return accountTypeRepository.save(newType);
-                });
-
-
-        Account account = accountMapper.toAccount(createAccountRequest);
-        account.setActType(savingsType);
+        account.setActType(actType);
         account.setIsDeleted(false);
-        account.setBalance(BigDecimal.valueOf(0));
+        account.setIsHide(false);
+        account.setActCurrency(createAccountRequest.actCurrency().name());
         account.setReceiverTransactions(new ArrayList<>());
         account.setSenderTransactions(new ArrayList<>());
         account.setCustomer(customer);
 
-
-        String segment = customer.getSegment().getName();
-
-        if (segment.equalsIgnoreCase("Gold")) {
-            account.setOverLimit(BigDecimal.valueOf(50000));
-        } else if (segment.equalsIgnoreCase("Silver")) {
-            account.setOverLimit(BigDecimal.valueOf(10000));
-        } else if (segment.equalsIgnoreCase("Regular")) {
-            account.setOverLimit(BigDecimal.valueOf(5000));
+        if(createAccountRequest.actNo().isBlank()){
+            String actNo;
+            do {
+                actNo = "ISTAD-" + String.format("%06d", new Random().nextInt(1_000_000)); // Max: 999,999
+            } while (accountRepository.existsByActNo(actNo));
+            account.setActNo(actNo);
         }
 
         accountRepository.save(account);
