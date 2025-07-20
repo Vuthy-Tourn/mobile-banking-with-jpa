@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -25,7 +26,7 @@ public class CustomerSegment {
     private Boolean isDeleted;
 
     @Column(nullable = false)
-    private Integer overLimit;
+    private BigDecimal overLimit;
 
     @OneToMany(mappedBy = "customerSegment")
     private List<Customer> customers;
